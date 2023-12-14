@@ -10,6 +10,20 @@ import kotlin.io.path.readText
 fun readInput(name: String) = Path("src/$name.txt").readLines()
 fun readText(name: String) = Path("src/$name.txt").readText()
 
+fun <T> runNTimes(func: (T) -> T, init: T, n: Long): T {
+    val seen = mutableListOf<T>()
+    var cur = init
+    var times = 0L
+    while (cur !in seen) {
+        seen += cur
+        cur = func(cur)
+        if (++times == n) return cur
+    }
+    val offset = seen.indexOf(cur)
+    val loop = seen.size - offset
+    val afterLoop = (n - offset) % loop
+    return (1..afterLoop).fold(cur) { total, _ -> func(total) }
+}
 /**
  * Converts string to md5 hash.
  */
